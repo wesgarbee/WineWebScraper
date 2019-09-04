@@ -12,11 +12,12 @@ from bs4 import BeautifulSoup as bSoup
 page_number = 0
 address = "https://www.wine.com/list/wine/red-wine/cabernet-sauvignon/7155-124-139"
 req = requests.head(address)
-err = req.status_code
+code = req.status_code
 
-while err is 200:
-    # address = input("Enter URL: ")
-    address = "https://www.wine.com/list/wine/red-wine/cabernet-sauvignon/7155-124-139" + "/" + str(page_number)
+address = input("Enter URL: ").strip()
+
+while code is 200:
+    address = address + "/" + str(page_number)
     wine_type = address.split("/")[-3]
     print(wine_type)
 
@@ -48,9 +49,12 @@ while err is 200:
             print("Error: ", e)
 
     page_number += 1
-    err = requests.head(address).status_code
-    print("Status code:", err)
 
-    seconds = random.randrange(1, 10)
-
+    # Sets delay so as not to overload the server
+    seconds = random.randrange(90, 120)
     time.sleep(seconds)
+
+    # Gets status code.
+    code = requests.head(address).status_code
+    if code != 200:
+        print("Status code:", code)
