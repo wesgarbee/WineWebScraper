@@ -6,23 +6,37 @@ import time
 import random
 import urllib.request
 import requests
+from pymongo import MongoClient
 from bs4 import BeautifulSoup as bSoup
 
 
+# Establish connection
+try:
+    conn = MongoClient()
+    print("Connected successfully!")
+except Exception as e:
+    print("Could not connect to MongoDB", e)
+
+# Connect to db
+db = conn.database
+
 page_number = 0
-address = "https://www.wine.com/list/wine/red-wine/cabernet-sauvignon/7155-124-139"
+# address = "https://www.wine.com/list/wine/red-wine/cabernet-sauvignon/7155-124-139"
+
+# Prompts user to enter the wine.com url to scrape
+address = input("Enter wine.com URL: ").strip()
 req = requests.head(address)
 code = req.status_code
-
-address = input("Enter URL: ").strip()
 
 while code is 200:
     address = address + "/" + str(page_number)
     wine_type = address.split("/")[-3]
     print(wine_type)
 
+    # Path name where the images for this search will be stored
     dir_name = ("./images/" + wine_type.replace("-", "_").lower())
 
+    # If that dir does not exist, creates it.
     if not os.path.isdir(dir_name):
         os.mkdir(dir_name)
 
